@@ -1,0 +1,82 @@
+# replace this with the top of your X11 tree
+# X11 = /exp/rcf/share/X11R5
+X11 = /usr/X11R6
+
+############## do not change below this line ####################
+
+ROGERINCDIR = ./include
+
+XINCDIR = $(X11)/include
+XLIBDIR = $(X11)/lib 
+
+XAWLIB = -lXaw
+XMULIB = -lXmu
+XTOOLLIB = -lXt
+XLIB = -lX11
+XEXTLIB = -lXext
+MATHLIB = -lm
+
+LIBS =  -L$(XLIBDIR) $(XAWLIB) $(XMULIB) $(XTOOLLIB) $(XLIB) $(XEXTLIB) \
+	$(MATHLIB)
+
+RM = rm -f
+CC = gcc
+#CCFLAGS = -c -O $(OPT) -I. -I$(XINCDIR)
+CCFLAGS = -c -g -I. -I$(XINCDIR) -I$(ROGERINCDIR)
+
+.SUFFIXES:	.c	.o
+
+.c.o:	
+	$(CC) $(CCFLAGS) $<
+
+############## do not change above this line ####################
+
+
+PROG1 = x
+
+OFILES1 = xrobot.o \
+         mobile_base.o \
+         arm.o \
+         eye.o \
+         object.o \
+	     4D_math.o \
+         control.o
+	 
+XKWOFILES = Xkw/Canvas.o Xkw/Slider.o Xkw/Xkw.o
+
+PROJECTOFILES = project1/MotorUnits.o \
+                project1/UserIO.o \
+                project2/TeleInterface.o \
+                project3/BodyCoordination.o \
+                project4/HarmonicFunctionPlanning.o
+
+HFILES = Roger.h simulate.h $(ROGERINCDIR)/control.h
+
+all:  subdirs  $(PROG1)
+
+subdirs:
+	cd ./Xkw; make; cd ..; \
+	cd ./project1; make; cd ..; \
+	cd ./project2; make; cd ..; \
+	cd ./project3; make; cd ..; \
+	cd ./project4; make; cd ..;
+
+$(PROG1):	$(OFILES1) $(PROJECTOFILES)
+	$(CC) -o $@ $(OFILES1) $(PROJECTOFILES) $(XKWOFILES) $(LIBS)
+
+clean:
+	$(RM) $(OFILES1) $(PROJECTOFILES) $(XKWOFILES) $(PROG1) *~
+
+
+mobile_base.o:	Roger.h simulate.h $(ROGERINCDIR)/control.h 
+
+arm.o:	Roger.h simulate.h $(ROGERINCDIR)/control.h
+
+eye.o:	Roger.h simulate.h $(ROGERINCDIR)/control.h
+
+object.o:	Roger.h simulate.h $(ROGERINCDIR)/control.h
+
+xrobot.o:	Xkw/Xkw.h Roger.h simulate.h $(ROGERINCDIR)/control.h
+
+control.o:	Roger.h	simulate.h $(ROGERINCDIR)/control.h
+
