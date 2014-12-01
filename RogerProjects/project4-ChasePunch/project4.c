@@ -91,6 +91,8 @@ void reset_arms (roger , limb)
 Robot* roger;
 double limb;
 {
+ 
+ printf("Reset Arms: Limb: %lf , Left: %lf , Right: %lf\n" , limb ,  LEFT, RIGHT);
 
  if (limb == LEFT)
  {
@@ -99,7 +101,7 @@ double limb;
  roger->arm_setpoint[LEFT][1] = -2.827433;
  }
 
- if (limb == RIGHT)
+ if (limb == 1)
  {
  printf("Resting right arm\n");
  roger->arm_setpoint[RIGHT][0] = -2.827433;
@@ -135,8 +137,8 @@ if ( CONVERGED == SEARCHTRACK(roger , time) && CONVERGED == TRACK(roger, time)) 
     }
      if (roger->ext_force[RIGHT][1] > 0)
      {
-     printf("Force on RIGHT arm detected\n");
-      reset_arms(roger , RIGHT);
+      printf("Force on RIGHT arm detected\n");
+      reset_arms(roger , 1.00000);
      }
 
    }
