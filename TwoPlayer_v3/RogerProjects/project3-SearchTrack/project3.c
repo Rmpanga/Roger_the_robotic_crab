@@ -74,41 +74,35 @@ int TRACK(roger, time)
 Robot* roger;
 double time;
 {
- printf("77\n");
+
   double ul, ur, error_eye[2], error_base;
- printf("79\n");
   static int return_state = UNKNOWN;
- printf("81\n");
+
   // control eyes independently and triangulate is ball is visible in both eyes
   if (compute_average_red_pixel(roger, &ur, &ul) == TRUE) {
- printf("84\n");
+
     /***********************************************************************/
     /* PROJECT3 PART II - complete the code to TRACK the red ball          */
     /*    that using base and eyes                                         */
     /***********************************************************************/
     error_eye[LEFT] = atan2((ul-63.5), 64.0);
- printf("90\n");
     error_eye[RIGHT] = atan2((ur-63.5), 64.0);
- printf("92\n");
+
     // define eye setpoints
      roger->eyes_setpoint[LEFT] =  roger->eye_theta[LEFT] + error_eye[LEFT];
- printf("95\n");
      roger->eyes_setpoint[RIGHT] = roger->eye_theta[RIGHT] + error_eye[RIGHT];
- printf("97\n");   
     // define base setpoints
      error_base =  ((roger->eye_theta[LEFT] + error_eye[LEFT] + roger->eye_theta[RIGHT] + error_eye[RIGHT]))/2.0;
- printf("100\n");
+
      roger->base_setpoint[THETA] = roger->base_position[THETA] + error_base;
-printf("102\n");
+
     // check for CONVERGE
     if ((fabs(error_eye[LEFT]) < 0.1) && (fabs(error_eye[RIGHT]) < 0.1) &&
 	(fabs(error_base) < 0.1)) {
       return_state = CONVERGED;
     }
     else { return_state = TRANSIENT; }
-printf("109\n");
     stereo_observation(roger, &obs); // in project2-Kinematics/vision.c
-printf("111\n");
     /***********************************************************************/
     /* PROJECT3 PART II - END                                              */
     /***********************************************************************/
@@ -116,7 +110,6 @@ printf("111\n");
   else {
     // No ball in view -> no reference
     return_state = NO_REFERENCE;
- printf("119\n");
   }
   return(return_state);
 }

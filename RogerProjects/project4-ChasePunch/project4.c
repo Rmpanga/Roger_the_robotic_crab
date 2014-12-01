@@ -92,20 +92,22 @@ Robot* roger;
 double limb;
 {
  
- printf("Reset Arms: Limb: %lf , Left: %lf , Right: %lf\n" , limb ,  LEFT, RIGHT);
+ //printf("Reset Arms: Limb: %lf , Left: %lf , Right: %lf\n" , limb ,  LEFT, RIGHT);
 
  if (limb == LEFT)
  {
  printf("Resting left arm\n");
  roger->arm_setpoint[LEFT][0] = 2.827433;
  roger->arm_setpoint[LEFT][1] = -2.827433;
+ RETREAT(roger);
  }
 
  if (limb == 1)
  {
  printf("Resting right arm\n");
- roger->arm_setpoint[RIGHT][0] = -2.827433;
- roger->arm_setpoint[RIGHT][1] = 2.827433;
+ roger->arm_setpoint[1][0] = -2.827433;
+ roger->arm_setpoint[1][1] = 2.827433;
+ RETREAT(roger);
  }
 
 }
@@ -134,11 +136,13 @@ if ( CONVERGED == SEARCHTRACK(roger , time) && CONVERGED == TRACK(roger, time)) 
     {   
      printf("Force on LEFT arm detected\n");
      reset_arms(roger , LEFT);
+     printf("Falling back to position\n");
     }
      if (roger->ext_force[RIGHT][1] > 0)
      {
       printf("Force on RIGHT arm detected\n");
       reset_arms(roger , 1.00000);
+      printf("Falling back to position\n");
      }
 
    }

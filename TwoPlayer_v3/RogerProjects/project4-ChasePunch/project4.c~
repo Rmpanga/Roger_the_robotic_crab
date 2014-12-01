@@ -7,7 +7,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "Xkw/Xkw.h"
-#include "Roger.h"
+#include "roger.h"
 #include "simulate.h"
 #include "control.h"
 #include "modes.h"
@@ -19,8 +19,8 @@ Robot* roger;
 double time;
 {
 
- if (obs.pos[X] <= -1)
- {
+// if (obs.pos[X] <= -1) FOR TWO PLAYER
+// {
    roger->base_setpoint[X] = obs.pos[X];
    roger->base_setpoint[Y] = obs.pos[Y];
     
@@ -28,12 +28,13 @@ double time;
         //If does not work use X^2 + Y^2
 //  if ((fabs(roger->base_setpoint[X] - roger->base_position[X]) <= 0.5) && (fabs(roger->base_setpoint[Y] - roger->base_position[Y]) <= 0.5)))  
 //		PUNCH (roger ,time);
-   
-  
+
+
      if (((fabs(roger->base_setpoint[X] - roger->base_position[X]) <= 1) && fabs(roger->base_setpoint[Y] - roger->base_position[Y]) <=1)) 
          return CONVERGED;
   
- }
+// }
+// return NO_REFERENCE; FOR TWO PLAYER
 }
 
 int RETREAT (roger) //OKAY
@@ -75,6 +76,9 @@ double time;
     else if (roger->base_position[Y] < ball_y_pos)
       inv_arm_kinematics(roger , LEFT , obs.pos[X] , obs.pos[Y]);
 
+
+
+
     //Punch both
 
 //convert obs postiongs to world to base 
@@ -83,82 +87,67 @@ double time;
 return 1; 
 }
 
-void reset_arms (roger)
+void reset_arms (roger , limb)
 Robot* roger;
+double limb;
 {
+ 
+ //printf("Reset Arms: Limb: %lf , Left: %lf , Right: %lf\n" , limb ,  LEFT, RIGHT);
 
-roger->arm_setpoint[LEFT][0] = 2.827433;
-roger->arm_setpoint[LEFT][1] = -2.827433;
-roger->arm_setpoint[RIGHT][0] = -2.827433;
-roger->arm_setpoint[RIGHT][1] = 2.827433;
+ if (limb == LEFT)
+ {
+ printf("Resting left arm\n");
+ roger->arm_setpoint[LEFT][0] = 2.827433;
+ roger->arm_setpoint[LEFT][1] = -2.827433;
+ RETREAT(roger);
+ }
 
+ if (limb == 1)
+ {
+ printf("Resting right arm\n");
+ roger->arm_setpoint[1][0] = -2.827433;
+ roger->arm_setpoint[1][1] = 2.827433;
+ RETREAT(roger);
+ }
 
 }
 
 
 
-int count = 0; 
+
 
 void project4_control(roger, time)
 Robot* roger;
 double time;
 { 
 
-printf("BASE X: %lf , BASE Y: %lf\n" , roger->base_position[X] , roger->base_position[Y]);
-printf("*********************  %lf\n", fabs(roger->base_setpoint[X] - roger->base_position[X]));
+//printf("BASE X: %lf , BASE Y: %lf\n" , roger->base_position[X] , roger->base_position[Y]);
 
-/** CHEATING **/
-
-if( count == 0)
-{
-if (roger->base_setpoint[X] == -3)
-{
-    roger->base_setpoint[X] = -2;
-}
- count++;
- }
-if (fabs(roger->base_setpoint[X] - roger->base_position[X]) <= 0.1)  
-{
-  roger->base_setpoint[X] = -3;
-  roger->base_setpoint[Y] = 0;
-  roger->base_setpoint[THETA] = roger->base_position[THETA];
-  }
- 
- // count++;
-
-/*******/
-
-   //roger->base_setpoint[Y] = obs.pos[Y];
-
-/*
 if ( CONVERGED == SEARCHTRACK(roger , time) && CONVERGED == TRACK(roger, time)) //May change with transient, optimize with lenght of arm for punch
  {
   if (CONVERGED == CHASE (roger , time))
    {
-    if (CONVERGED == CHASE (roger , time))
-     {
-      PUNCH(roger , time); 
+     printf("Punch being called\n"); 
+     PUNCH(roger , time);        
+   }
 
-      if (roger->base_position[X] >= -2) //Back up if near center
-      {
-       RETREAT(roger);
-      }
-       
-     }
-
-      
- 
-    if (roger->ext_force[LEFT][1] > 0 || roger->ext_force[RIGHT][1] > 0)
+       /**Force detectors **/
+    if (roger->ext_force[LEFT][1] > 0 )
     {   
-     reset_arms(roger);
-     RETREAT(roger);
+     printf("Force on LEFT arm detected\n");
+     reset_arms(roger , LEFT);
+     printf("Falling back to position\n");
     }
+     if (roger->ext_force[RIGHT][1] > 0)
+     {
+      printf("Force on RIGHT arm detected\n");
+      reset_arms(roger , 1.00000);
+      printf("Falling back to position\n");
+     }
 
    }
 // printf("%lf ,%lf , %lf, %lf, %lf, %lf\n",time , roger->base_position[X] , roger->base_position[Y] , roger->base_position[THETA] , roger->eye_theta[LEFT] , roger->eye_theta[RIGHT]);
- }
 return;
-*/
 }
 
 /************************************************************************/

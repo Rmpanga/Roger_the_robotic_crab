@@ -73,11 +73,9 @@ double time;
 int TRACK(roger, time)
 Robot* roger;
 double time;
-{
+
   double ul, ur, error_eye[2], error_base;
-
   static int return_state = UNKNOWN;
-
   // control eyes independently and triangulate is ball is visible in both eyes
   if (compute_average_red_pixel(roger, &ur, &ul) == TRUE) {
     /***********************************************************************/
@@ -86,22 +84,18 @@ double time;
     /***********************************************************************/
     error_eye[LEFT] = atan2((ul-63.5), 64.0);
     error_eye[RIGHT] = atan2((ur-63.5), 64.0);
-
     // define eye setpoints
      roger->eyes_setpoint[LEFT] =  roger->eye_theta[LEFT] + error_eye[LEFT];
-     roger->eyes_setpoint[RIGHT] = roger->eye_theta[RIGHT] + error_eye[RIGHT];
-    
+     roger->eyes_setpoint[RIGHT] = roger->eye_theta[RIGHT] + error_eye[RIGHT];  
     // define base setpoints
      error_base =  ((roger->eye_theta[LEFT] + error_eye[LEFT] + roger->eye_theta[RIGHT] + error_eye[RIGHT]))/2.0;
      roger->base_setpoint[THETA] = roger->base_position[THETA] + error_base;
-
     // check for CONVERGE
     if ((fabs(error_eye[LEFT]) < 0.1) && (fabs(error_eye[RIGHT]) < 0.1) &&
 	(fabs(error_base) < 0.1)) {
       return_state = CONVERGED;
     }
-    else { return_state = TRANSIENT; }
-
+    else { return_state = TRANSIENT; };
     stereo_observation(roger, &obs); // in project2-Kinematics/vision.c
     /***********************************************************************/
     /* PROJECT3 PART II - END                                              */
