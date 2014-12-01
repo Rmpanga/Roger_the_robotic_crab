@@ -153,7 +153,7 @@ double time;
   
 //  printf("TransError is : %lf\n" , transError);
 
-  velocity =  roger->base_velocity[X] * cos(roger->base_position[THETA]) + ry * sin(roger->base_position[THETA]);
+  velocity =  roger->base_velocity[X] * cos(roger->base_position[THETA]) + roger->base_velocity[Y] * sin(roger->base_position[THETA]);
   Fx = kp_base_trans * transError - kd_base_trans * velocity;
   
   return(Fx);
