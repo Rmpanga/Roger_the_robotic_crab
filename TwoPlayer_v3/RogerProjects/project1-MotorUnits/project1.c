@@ -94,7 +94,7 @@ double time;
 
 // initial (bad) gains for the PD controllers for the arms 
 double kp_arm = 12000; //K
-double kd_arm = 77.45966924; //B
+double kd_arm = 80;      // 77.45966924; //B
 
 /* PROJECT #1.2 - PD CONTROLLER FOR THE ARMS                             */
 /* setpoints - joint angles in radians for the shoulders and elbows      */
@@ -148,7 +148,7 @@ double time;
   ry = roger->base_setpoint[Y] - roger->base_position[Y];
 
   transError = rx *  cos(roger->base_position[THETA]) + ry * sin(roger->base_position[THETA]);
-  velocity =  roger->base_velocity[X] * cos(roger->base_position[THETA]) + ry * sin(roger->base_position[THETA]);
+  velocity =  roger->base_velocity[X] * cos(roger->base_position[THETA]) + roger->base_velocity[Y] * sin(roger->base_position[THETA]);
   Fx = kp_base_trans * transError - kd_base_trans * velocity;
   
   return(Fx);
@@ -217,14 +217,20 @@ void control_roger(roger, time)
 Robot * roger;
 double time;
 {
-
+/*
+ printf("roger->arm_theta[RIGHT][0]: %lf\n" , roger->arm_theta[RIGHT][0]); 
+ printf("roger->arm_theta[RIGHT][1]: %lf\n" , roger->arm_theta[RIGHT][1]);
+ printf("roger->arm_theta[LEFT][0]: %lf\n" , roger->arm_theta[LEFT][0]); 
+ printf("roger->arm_theta[LEFT][1]: %lf\n" , roger->arm_theta[LEFT][1]); 
+*/
   //printf("arm set points: left 0 : %lf , left 1 %lf , right 0 %lf ,  right 1: %lf\n" ,  roger->arm_theta[LEFT][0] , roger->arm_theta[LEFT][1] , roger->arm_theta[RIGHT][0] , roger->arm_theta[RIGHT][1]);
-  update_setpoints(roger);
 
-  // turn setpoint references into torques
-  PDController_eyes(roger, time);
-  PDController_arms(roger, time);
-  PDController_base(roger,time);
+
+   update_setpoints(roger);
+
+   PDController_base(roger,time);
+   PDController_eyes(roger, time);
+   PDController_arms(roger, time);
 }
 
 /*************************************************************************/
