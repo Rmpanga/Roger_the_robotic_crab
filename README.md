@@ -1,7 +1,9 @@
 Roger_the_robotic_crab
 ======================
 
-Robotics Class Project
+Robotics Class Project 
+
+Language used: C
 
 Description:
 
