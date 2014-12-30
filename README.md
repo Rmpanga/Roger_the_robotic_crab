@@ -6,6 +6,7 @@ Robotics Class Project
 Language used: C
 
 Description:
+------------
 
 Roger the Robotic Crab was a semester long project that involved teaching a non homogenous robot how to play Allan Alcorn's classic game of PONG!!!
 
